@@ -35,3 +35,9 @@ st.write("les films les plus long par genre : ", queries.longestFilmByGenre())
 
 st.subheader("Question 11 : ")
 st.write("les films qui sont noté plus de 80 et ont généré plus de 50 millions : ", queries.hightScoreRevenue())
+
+st.subheader("Question 12 : ")
+st.write("correlation : ", queries.correlationRuntimeRevenue())
+
+st.subheader("Question 13 : ")
+st.write("Evolution de la dureer moyenne des films par decenies : ", queries.avgRuntimePerDecenies())

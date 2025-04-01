@@ -1,5 +1,6 @@
 import DB.Mongo.connexion_mongo as db
 import matplotlib.pyplot as plt
+import numpy as np
 
 #Question 1
 def filmsByYear():
@@ -132,6 +133,41 @@ def hightScoreRevenue():
     collection = db.get_dbCollection()
     result = collection.find({"Metascore": {"$gt":80}, "Revenue (Millions)": {"$gt": 50}}, {"title":1, "_id":0})
     return list(result)
+
+#Question 12
+def correlationRuntimeRevenue():
+    collection = db.get_dbCollection()
+    films = list(collection.find({"Runtime (Minutes)": {"$exists": True, "$ne":""}, "Revenue (Millions)": {"$exists": True, "$ne":""}}))
+    runtimes = [film["Runtime (Minutes)"] for film in films]
+    revenues = [film["Revenue (Millions)"] for film in films]
+
+    fig, ax = plt.subplots()
+    ax.scatter(runtimes, revenues, alpha=0.5, color="blue")
+    ax.set_xlabel("Durée du film (minutes)")
+    ax.set_ylabel("Revenu (millions)")
+    ax.set_title("Relation entre la durée du film et le revenu généré")
+    ax.grid(True)
+    return fig
+
+#Question 13
+def avgRuntimePerDecenies():
+    collection = db.get_dbCollection()
+    annees = [1990, 2000, 2010]
+    avg_durations = {}
+    for annee in annees:
+        pipeline = [
+            {"$match": {"year": {"$gte": annee, "$lte": annee + 9}}}, 
+            {"$group": {"_id": None, "avgRuntime": {"$avg": "$Runtime (Minutes)"}}} 
+        ]
+        result = list(collection.aggregate(pipeline))
+        if result:
+            avg_durations[annee] = result[0]["avgRuntime"] 
+        else:
+            avg_durations[annee] = 0
+
+    return avg_durations
+
+
 
 
 
