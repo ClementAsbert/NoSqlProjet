@@ -2,7 +2,7 @@ import DB.Mongo.connexion_mongo as db
 import matplotlib.pyplot as plt
 
 #Question 1
-def films_by_year():
+def filmsByYear():
     collection = db.get_dbCollection()
     pipeline = [
         {"$group": {"_id": "$year", "count": {"$sum": 1}}}, 
@@ -16,12 +16,12 @@ def films_by_year():
     return None
 
 #Question 2
-def films_after_1999():
+def filmsAfter1999():
     collection = db.get_dbCollection()
     return collection.count_documents({"year": {"$gt": 1999}})
 
 #Question 3
-def average_votes_2007():
+def averageVotes2007():
     collection = db.get_dbCollection()
     pipeline = [
         {"$match": {"year": 2007}}, 
@@ -33,7 +33,7 @@ def average_votes_2007():
     return None
 
 #Question 4
-def nb_films_per_years_histogram():
+def nbFilmsPerYearsHistogram():
     collection = db.get_dbCollection()
     pipeline = [
         {"$match": {"year": {"$ne": None}}}, 
@@ -52,7 +52,7 @@ def nb_films_per_years_histogram():
     return fig
 
 #Question 5 
-def genre_available():
+def genreAvailable():
     collection = db.get_dbCollection()
     pipeline = [
         {"$project": {
@@ -67,10 +67,73 @@ def genre_available():
     return [x["_id"] for x in result]
 
 #Question 6
-def most_revenue_film():
+def mostRevenueFilm():
     collection = db.get_dbCollection()
     result = collection.find({"Revenue (Millions)": {"$ne": ""}}).sort("Revenue (Millions)", -1).limit(1)
     return list(result)[0]["title"]
+
+#Question 7 (aucun resultat pour 5 films)
+def directorMoreThan5Films():
+    collection = db.get_dbCollection()
+    pipeline = [
+        {"$group": {"_id": "$Director", "count": {"$sum": 1}}},
+        {"$match": {"count": {"$gte": 5}}}
+    ]
+    result = list(collection.aggregate(pipeline))
+    if not result:
+        return "Aucun réalisateur avec plus de 5 films"
+    return [x["_id"] for x in result]
+
+#Question 8
+def genreWithHighestRevenue():
+    collection = db.get_dbCollection()
+    pipeline = [
+        {"$unwind": "$genre"},  
+        {"$group": {"_id": "$genre", "avgRevenue": {"$avg": "$Revenue (Millions)"}}},
+        {"$sort": {"avgRevenue": -1}}
+    ]
+    result = list(collection.aggregate(pipeline))
+    return result[0]["_id"]
+
+#Question 9
+def topRatedFilmsPerDecennie():
+    colection = db.get_dbCollection()
+    decennies = [1990, 2000, 2010]
+    top_3_films = {}
+
+    for decennie in decennies:
+        pipeline = [
+            {"$match": {"year": {"$gte": decennie, "$lt": decennie + 9}}},
+            {"$sort": {"Rating": -1}},
+            {"$limit": 3}
+        ]
+        result = list(colection.aggregate(pipeline))
+        top_3_films[decennie] = [film["title"] for film in result]
+    return top_3_films
+
+#Question 10
+def longestFilmByGenre():
+    collection = db.get_dbCollection()
+    pipeline = [
+        {"$project": {"title": 1, "genre": 1, "runtime": "$Runtime (Minutes)"}},
+        {"$unwind": "$genre"}, 
+        {"$group": {
+            "_id": "$genre",
+            "longestFilm": {"$max": "$runtime"},
+            "title": {"$first": "$title"} 
+        }},
+        {"$sort": {"_id": 1}}
+    ]
+    result = list(collection.aggregate(pipeline))
+    return [{"genre": x["_id"], "title": x["title"]} for x in result]
+
+#question 11 
+def hightScoreRevenue():
+    collection = db.get_dbCollection()
+    result = collection.find({"Metascore": {"$gt":80}, "Revenue (Millions)": {"$gt": 50}}, {"title":1, "_id":0})
+    return list(result)
+
+
 
     
 
