@@ -49,16 +49,85 @@ st.write("Evolution de la dureer moyenne des films par decenies : ", queries.avg
 queries.extraction()
 
 #--------- creation des csv
+
+""""
 csvCreation.extractFilms()
 csvCreation.extractActors()
 csvCreation.relationMoviesActors() 
 csvCreation.extractDirectors()
 csvCreation.relationMoviesDirectors()
 csvCreation.extractGenres()
-csvCreation.relationMoviesGenres()
+csvCreation.relationMoviesGenres()"
+"""
 
 #--------- creation de la base de donnees neo4j
 
 neo4j_queries.createMovies()
+neo4j_queries.createActors()
+neo4j_queries.createDirectors()
+neo4j_queries.createGenre()
+neo4j_queries.createMovieActorRelationships()
+neo4j_queries.createMovieDirectorRelationships()
+neo4j_queries.createMovieGenreRelationships()
+
+
+#--------- requetes
+
+st.subheader("Question 14 : ")
+res14 = neo4j_queries.actorPlaylotsOfMovies()
+for actor, count in res14:
+    st.write(f"Acteur : {actor}, Nombre de films : {count}")
+
+st.subheader("Question 15 : ")
+res15 = neo4j_queries.actorPlayWithAnneHathaway()
+for actor in res15:
+    st.write(f"Acteur : {actor}")
+
+st.subheader("Question 16 : ")
+res16 = neo4j_queries.actorPlayMostRevenueFilm()
+for actor, revenue in res16:
+    st.write(f"Acteur : {actor}, Revenu : {revenue}")
+
+st.subheader("Question 17 : ")
+st.write("Moyenne des votes : ", neo4j_queries.avgVotes())
+
+st.subheader("Question 18 : ")
+st.write("Genre le plus representé : ", neo4j_queries.genreMostRepresented())")
+
+st.subheader("Question 19 : ")
+res19= neo4j_queries.filmWithActorPlayWithMe()
+for film in res19:
+    st.write(f"Film ou les acteur qui on jouer avec moi on jouer aussi: {film}")
+
+st.subheader("Question 20 : ")
+st.write("le réalisateur qui a jouer avec le plus d'acteur disctinct : ",neo4j_queries.DirectorPlayWithMostDistinctActors()))
+
+st.subheader("Question 21 : ")
+res21 = neo4j_queries.filmWithMostConnected()
+for film, count in res21:
+    st.write(f"Film : {film}, Nombre d'acteurs : {count}")
+
+st.subheader("Question 22 : ")
+res22 = neo4j_queries.fiveActorsPlayWithMostDistinctDirector()
+for actor in res22:
+    st.write(f"Acteur : {actor}")
+
+st.subheader("Question 23 : ")
+st.write("film recommander pour Anne Hathaway : ", neo4j_queries.RecommendedFilmsForActor())
+
+st.subheader("Question 24 : ")
+st.write("creation de relation")
+neo4j_queries.createRelationInfluence()
+
+st.subheader("Question 25 : ")
+st.write("chemine le plus court entre deux acteur")
+#st.write(neo4j_queries.shortestPathBetweenActors("Anne Hathaway", "Tom Hanks"))
+
+st.subheader("Question 26 : ")
+res26 = neo4j_queries.actorCommunity()
+for actor, community in res26:
+    st.write(f"Acteur : {actor}, Communauté : {community}")
+
+
 
 
