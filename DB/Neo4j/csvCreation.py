@@ -5,6 +5,9 @@ import json
 with open("movies.json", encoding="utf-8") as f:
     data = json.load(f)
 
+"""
+je creer des csv pour chaque entité et relation comme cela je pourrait directement les importer dans neo4j
+"""
 
 def extractFilms():
     #on prend que les champs demander 

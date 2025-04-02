@@ -176,6 +176,7 @@ def avgRuntimePerDecenies():
 
 #----------------------------------------- exportation des données pour neo4j -----------------------------------------
 
+# creation d'un json contenant tous les films seulement avec les champs utile
 def extraction():
     collection = db.get_dbCollection()
     films = collection.find({}, {"_id": 1, "title": 1, "Director": 1, "Actors": 1, "genre": 1, "year": 1, "Votes": 1, "rating": 1, "Revenue (Millions)": 1})

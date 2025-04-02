@@ -193,7 +193,7 @@ def fiveActorsPlayWithMostDistinctDirector():
     LIMIT 5;
     """
     result = run_query(query)
-    return [(record["acteur"] for record in result]
+    return [(record["acteur"]) for record in result]
 
 def RecommendedFilmsForActor():
     query = """
@@ -241,5 +241,5 @@ def actorCommunity():
     """
     result = run_query(query)
     return [(record["acteur"], record["communityId"]) for record in result]
-    
+
 

@@ -92,7 +92,7 @@ st.subheader("Question 17 : ")
 st.write("Moyenne des votes : ", neo4j_queries.avgVotes())
 
 st.subheader("Question 18 : ")
-st.write("Genre le plus representé : ", neo4j_queries.genreMostRepresented())")
+st.write("Genre le plus representé : ", neo4j_queries.genreMostRepresented())
 
 st.subheader("Question 19 : ")
 res19= neo4j_queries.filmWithActorPlayWithMe()
@@ -100,7 +100,7 @@ for film in res19:
     st.write(f"Film ou les acteur qui on jouer avec moi on jouer aussi: {film}")
 
 st.subheader("Question 20 : ")
-st.write("le réalisateur qui a jouer avec le plus d'acteur disctinct : ",neo4j_queries.DirectorPlayWithMostDistinctActors()))
+st.write("le réalisateur qui a jouer avec le plus d'acteur disctinct : ",neo4j_queries.DirectorPlayWithMostDistinctActors())
 
 st.subheader("Question 21 : ")
 res21 = neo4j_queries.filmWithMostConnected()
