@@ -1,6 +1,7 @@
 import DB.Mongo.connexion_mongo as db
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 
 #Question 1
 def filmsByYear():
@@ -34,6 +35,7 @@ def averageVotes2007():
     return None
 
 #Question 4
+# retoune un histogramme
 def nbFilmsPerYearsHistogram():
     collection = db.get_dbCollection()
     pipeline = [
@@ -44,6 +46,7 @@ def nbFilmsPerYearsHistogram():
     result = list(collection.aggregate(pipeline))
     years = [int(x["_id"]) for x in result]
     counts = [x["count"] for x in result]
+    # creation histo 
     fig, ax = plt.subplots()
     ax.bar(years, counts, color="skyblue")
     ax.set_xlabel("Année")
@@ -59,7 +62,7 @@ def genreAvailable():
         {"$project": {
             "genres": {"$split": ["$genre", ","]}
         }},
-        {"$unwind": "$genres"},
+        {"$unwind": "$genres"}, #permet de séparer les genres
         {"$group": {
             "_id": "$genres"
         }}
@@ -135,6 +138,7 @@ def hightScoreRevenue():
     return list(result)
 
 #Question 12
+# retourne un grpahique de point pour voir l'évolution la durer des films et des revenues
 def correlationRuntimeRevenue():
     collection = db.get_dbCollection()
     films = list(collection.find({"Runtime (Minutes)": {"$exists": True, "$ne":""}, "Revenue (Millions)": {"$exists": True, "$ne":""}}))
@@ -162,10 +166,22 @@ def avgRuntimePerDecenies():
         result = list(collection.aggregate(pipeline))
         if result:
             avg_durations[annee] = result[0]["avgRuntime"] 
+        #retoune 0 si aucun film dans cette decenies
         else:
-            avg_durations[annee] = 0
+            avg_durations[annee] = 0 
 
     return avg_durations
+
+
+
+#----------------------------------------- exportation des données pour neo4j -----------------------------------------
+
+def extraction():
+    collection = db.get_dbCollection()
+    films = collection.find({}, {"_id": 1, "title": 1, "Director": 1, "Actors": 1, "genre": 1, "year": 1, "Votes": 1, "rating": 1, "Revenue (Millions)": 1})
+    # j'enregistre dans un json qui me serviras pour construire les csv pour neo4j
+    with open("movies.json", "w", encoding="utf-8") as f:
+        json.dump(list(films), f, indent=4)
 
 
 

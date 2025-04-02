@@ -1,5 +1,7 @@
 import streamlit as st
 import DB.Mongo.queries as queries
+import DB.Neo4j.queries as neo4j_queries
+import DB.Neo4j.csvCreation as csvCreation
 
 st.title("MongoDB & Neo4j avec Streamlit")
 
@@ -41,3 +43,22 @@ st.write("correlation : ", queries.correlationRuntimeRevenue())
 
 st.subheader("Question 13 : ")
 st.write("Evolution de la dureer moyenne des films par decenies : ", queries.avgRuntimePerDecenies())
+
+
+#--------- extraction de donnees dans un fichier json
+queries.extraction()
+
+#--------- creation des csv
+csvCreation.extractFilms()
+csvCreation.extractActors()
+csvCreation.relationMoviesActors() 
+csvCreation.extractDirectors()
+csvCreation.relationMoviesDirectors()
+csvCreation.extractGenres()
+csvCreation.relationMoviesGenres()
+
+#--------- creation de la base de donnees neo4j
+
+neo4j_queries.createMovies()
+
+
