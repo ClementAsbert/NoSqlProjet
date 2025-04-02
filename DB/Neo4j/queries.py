@@ -9,7 +9,7 @@ def run_query(query, params=None):
         return session.run(query, params)
     
 #----------- Creation de la base de donnees neo4j -----------
-    
+
 def createMovies():
     with open("DB/Neo4j/csv/movies.csv", "r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
@@ -105,6 +105,7 @@ def addMeToPassengerActor():
 
 
 #------------ Requete --------------
+#question 14
 def actorPlaylotsOfMovies():
     query = """
     MATCH (a:Actor)-[:A_jouer]->(m:Movie)
@@ -115,6 +116,7 @@ def actorPlaylotsOfMovies():
     result = run_query(query)
     return [(record["acteur"], record["nombre_de_films"]) for record in result]
 
+#question 15
 def actorPlayWithAnneHathaway():
     query = """
     MATCH (anne:Actor {name: "Anne Hathaway"})-[:A_jouer]->(m:Movie)<-[:A_jouer]-(a:Actor)
@@ -124,6 +126,7 @@ def actorPlayWithAnneHathaway():
     result = run_query(query)
     return [record["a.name"] for record in result]
 
+#question 16
 def actorPlayMostRevenueFilm():
     query = """
     MATCH (a:Actor)-[:A_jouer]->(m:Movie)
@@ -135,6 +138,7 @@ def actorPlayMostRevenueFilm():
     result = run_query(query)
     return [(record["acteur"], record["total_revenue"]) for record in result]
 
+#question 17
 def avgVotes():
     query = """
     MATCH (m:Movie)
@@ -143,6 +147,7 @@ def avgVotes():
     result = run_query(query)
     return result.single()["moyenne_votes"]
 
+#question 18
 def genreMostRepresented():
     query = """
     MATCH (m:Movie)-[:BELONGS_TO]->(g:Genre)
@@ -153,6 +158,7 @@ def genreMostRepresented():
     result = run_query(query)
     return result.single()["genre"]
 
+#question 19
 def filmWithActorPlayWithMe():
     query = """
     MATCH (me:Actor {name: "Clément ASBERT"})-[:A_jouer]->(m1:Movie)<-[:A_jouer]-(a:Actor),
@@ -163,6 +169,7 @@ def filmWithActorPlayWithMe():
     result = run_query(query)
     return [record["film"] for record in result]
 
+#question 20
 def DirectorPlayWithMostDistinctActors():
     query = """
     MATCH (d:Director)-[:DIRECTED]->(m:Movie)<-[:A_jouer]-(a:Actor)
@@ -173,6 +180,7 @@ def DirectorPlayWithMostDistinctActors():
     result = run_query(query)
     return result.single()["réalisateur"]
 
+#question 21
 def filmWithMostConnected():
     query = """
     MATCH (m1:Movie)<-[:A_jouer]-(a:Actor)-[:A_jouer]->(m2:Movie)
@@ -184,7 +192,7 @@ def filmWithMostConnected():
     result = run_query(query)
     return [(record["film"], record["nombre_acteurs_connectés"]) for record in result]
 
-
+#question 22
 def fiveActorsPlayWithMostDistinctDirector():
     query = """
     MATCH (a:Actor)-[:A_jouer]->(m:Movie)<-[:DIRECTED]-(d:Director)
@@ -195,6 +203,7 @@ def fiveActorsPlayWithMostDistinctDirector():
     result = run_query(query)
     return [(record["acteur"]) for record in result]
 
+#question 23
 def RecommendedFilmsForActor():
     query = """
     MATCH (a:Actor {name: "Anne Hathaway"})-[:A_jouer]->(m:Movie)-[:BELONGS_TO]->(g:Genre),
@@ -207,6 +216,7 @@ def RecommendedFilmsForActor():
     result = run_query(query)
     return result.single()["film_recommandé"]
 
+#question 24
 def createRelationInfluence():
     query = """
     MATCH (d1:Director)-[:DIRECTED]->(m1:Movie)-[:BELONGS_TO]->(g:Genre),
@@ -216,6 +226,8 @@ def createRelationInfluence():
     """
     run_query(query)
 
+# question 25
+# retourne le chemin le plus court entre deux acteurs paser en parametre
 def shortestPathBetweenTwoActors(actor1, actor2):
     query = """
     MATCH (a1:Actor {name: $actor1}), (a2:Actor {name: $actor2}),
@@ -226,6 +238,9 @@ def shortestPathBetweenTwoActors(actor1, actor2):
     result = run_query(query, params)
     return result.single()
 
+# question 26
+# Cette fonction utilise l'algorithme Louvain pour détecter les communautés dans le graphe des acteurs
+# et retourne les pour chauqe acteurs un id de communauté 
 def actorCommunity():
     query = """
     CALL gds.graph.project(
